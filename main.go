@@ -64,7 +64,7 @@ func main() {
     powerup.ID = len(powerups) + 1
     powerups = append(powerups, *powerup)
 
-    return c.Status(200).JSON(powerups)
+    return c.Status(200).SendString(fmt.Sprintf("Powerup %s added successfully", powerups[powerup.ID-1].Name))
 
   })
 
@@ -83,7 +83,7 @@ func main() {
     user.ID = len(users) + 1
     users = append(users, *user)
 
-    return c.Status(200).JSON(users)
+    return c.Status(200).SendString(fmt.Sprintf("User %s added successfully", users[user.ID-1].Username))
   })
 
 
@@ -112,8 +112,35 @@ func main() {
 
     for i, powerup := range powerups {
       if fmt.Sprint(powerup.ID) == id {
+        val_powerup := powerups[powerup.ID-1].Name
         powerups = append(powerups[:i], powerups[i+1:]...)
-        return c.Status(200).SendString("Successfully deleted the powerup")
+
+        for j := i; j < len(powerups); j++ {
+          powerups[j].ID--
+        }
+
+        return c.Status(200).SendString(fmt.Sprintf("Successfully deleted the powerup %s", val_powerup))
+      }
+    }
+
+    return c.Status(404).JSON(fiber.Map{"error":"Todo not found"})
+
+  })
+
+  // Delete users
+  app.Delete("/del/users/:id", func(c fiber.Ctx) error {
+    id := c.Params("id")
+
+    for i, user := range users {
+      if fmt.Sprint(user.ID) == id {
+        val_user := users[user.ID-1].Username
+        users = append(users[:i], users[i+1:]...)
+
+        for j := i; j < len(users); j++ {
+          users[j].ID--
+        }
+
+        return c.Status(200).SendString(fmt.Sprintf("Successfully deleted the user %s", val_user))
       }
     }
 
