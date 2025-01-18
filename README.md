@@ -2,15 +2,15 @@ For now the general operations are just being done into lists in the code which 
 
 
 # General Goals
-- [ ] Users
+- [x] Users
 - [x] Powerups
 - [ ] Tasks
 - [ ] General DB integration
 
 ## Users
 - [x] Creating
-- [ ] Updating
-- [ ] Deleting
+- [x] Updating
+- [x] Deleting
 - [x] Getting complete list
 - [ ] DB integration
 
