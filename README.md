@@ -4,7 +4,7 @@ For now the general operations are just being done into lists in the code which 
 # General Goals
 - [x] Users
 - [x] Powerups
-- [ ] Tasks
+- [x] Tasks
 - [ ] General DB integration
 
 ## Users
@@ -22,7 +22,7 @@ For now the general operations are just being done into lists in the code which 
 - [ ] DB integration
 
 ## Tasks
-- [ ] Creating
-- [ ] Deleting
-- [ ] Updating (daily?)
+- [x] Creating
+- [x] Deleting
+- [x] Updating
 - [ ] DB integration

@@ -22,3 +22,12 @@ func PowerupRoutes(app *fiber.App){
   powerupGroup.Patch("/:id", handlers.UpdatePowerup)
   powerupGroup.Delete("/:id", handlers.DeletePowerup)
 }
+
+func TaskRoutes(app *fiber.App){
+  taskGroup := app.Group("/tasks")
+
+  taskGroup.Get("/", handlers.GetAllTasks)
+  taskGroup.Post("/", handlers.CreateTask)
+  taskGroup.Patch("/:id", handlers.UpdateTask)
+  taskGroup.Delete("/:id", handlers.DeleteTask)
+}

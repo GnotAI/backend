@@ -21,6 +21,7 @@ func main() {
   PORT := os.Getenv("PORT")
 
   routes.UserRoutes(app)
+  routes.TaskRoutes(app)
   routes.PowerupRoutes(app)
   
   log.Fatal(app.Listen(":"+PORT))
