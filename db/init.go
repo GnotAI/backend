@@ -1,38 +1,58 @@
 package db
 
 import (
-  "os"
-  "log"
-  "context"
+	"database/sql"
+	"log"
+	"os"
+	"time"
 
-  "github.com/jackc/pgx/v5/pgxpool"
+	_ "github.com/lib/pq"
+  gde "github.com/joho/godotenv"
 )
 
-var Pool *pgxpool.Pool
+var DB *sql.DB
 
-func Initdb() error {
+func init() {
 
-  var dbURL string
-  ctx := context.Background()
+  log.Println("Loading .env files...")
+  if err := gde.Load(".env"); err != nil {
+    log.Fatal("Failed to load .env file")
+  }
 
-  ENV := os.Getenv("ENV")
-  if ENV == "production" {
-    dbURL = os.Getenv("RENDER_DB_URL")
+  log.Println("Initializing database... ")
+  db, err := connectWithPq()
+  if err != nil {
+    log.Fatalf("Failed to connect to db: %v", err)
+  }
+  defer db.Close()
+  
+  log.Println("Successfully connected to the database")
+
+}
+
+func connectWithPq() (*sql.DB, error) {
+  var connString string
+  if os.Getenv("ENV") == "development" {
+   connString = os.Getenv("LOCAL_DB_URL")
   } else {
-    dbURL = os.Getenv("LOCAL_DB_URL")
+    connString = os.Getenv("RENDER_DB_URL")
   }
 
-  // Connect to db
-  Pool, err := pgxpool.New(ctx, dbURL)
+  db, err := sql.Open("postgres", connString)
   if err != nil {
-   log.Fatalf("Unable to connect to database: %v", err)
+    return nil, err
   }
 
-  // Test connection
-  err = Pool.Ping(ctx)
+  // Configure connection pooling
+  db.SetMaxOpenConns(10)
+  db.SetMaxIdleConns(5)
+  db.SetConnMaxLifetime(time.Hour)
+
+  // Test the connection
+  err = db.Ping()
   if err != nil {
-    log.Fatalf("Unable to ping to database: %v", err)
+    return nil, err
   }
 
-  return nil
+  return db, nil
 }
