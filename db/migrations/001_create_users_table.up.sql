@@ -1,5 +1,0 @@
-CREATE TABLE users (
-  id SERIAL PRIMARY KEY,
-  username VARCHAR(255) UNIQUE NOT NULL,
-  pssword VARCHAR(255) NOT NULL
-);

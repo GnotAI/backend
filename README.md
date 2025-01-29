@@ -33,6 +33,10 @@ http://localhost:PORT/{endpoint}/:id/
 ```
 The operation performe will depend on the http metho in use. DELETE will delete the user with the id given in the params, and same will occur for update.
 
+The entry fields for each endpoint are as follows:
+- Users take values for username(`string`), password(`string`) and status(`boolean`)
+- Powerups take values for name(`string`) and duration(`integer`)
+- Tasks take values for description(`string`) and completed(`boolean`)
 
 ## Current challenges
 I am currently struggling to properly perform CRUD operations with the postgresql database. This is the last step necessary before I host this project on [Render](https://render.com/)
@@ -41,24 +45,24 @@ I am currently struggling to properly perform CRUD operations with the postgresq
 - [x] Users
 - [x] Powerups
 - [x] Tasks
-- [ ] General DB integration
+- [x] General DB integration
 
 #### Users
 - [x] Creating
 - [x] Updating
 - [x] Deleting
 - [x] Getting complete list
-- [ ] DB integration
+- [x] DB integration
 
 #### Powerups
 - [x] Creating
 - [x] Updating
 - [x] Deleting
 - [x] Getting complete list
-- [ ] DB integration
+- [x] DB integration
 
 #### Tasks
 - [x] Creating
 - [x] Deleting
 - [x] Updating
-- [ ] DB integration
+- [x] DB integration

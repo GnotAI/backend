@@ -16,6 +16,7 @@ func main() {
   log.Println("Starting fiber app...")
 
   db.Initdb()
+  defer db.DisconnectMongo()
 
   app := fiber.New()
   PORT := os.Getenv("PORT")

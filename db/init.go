@@ -6,20 +6,13 @@ import (
 	"os"
   "time"
 
-	gde "github.com/joho/godotenv"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 var Cli *mongo.Client
-var Collection *mongo.Collection
 
 func Initdb() {
-
-  log.Println("Loading .env files...")
-  if err := gde.Load(".env"); err != nil {
-    log.Fatal("Failed to load .env file")
-  }
 
   log.Println("Initializing database... ")
   connectToMongo()
@@ -38,24 +31,15 @@ func connectToMongo() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer client.Disconnect(ctx)
-
-	// Create databases by inserting data
-  createDatabase(client, "users")
-	createDatabase(client, "powerups")
-	createDatabase(client, "tasks")
 
   Cli = client
 }
 
-func createDatabase(client *mongo.Client, dbName string) {
-	// Access the database and a collection
-	db := client.Database(dbName)
-	Collection := db.Collection("dummy")
-
-	// Insert a document to persist the database
-	_, err := Collection.InsertOne(context.Background(), map[string]string{"name": "init"})
-	if err != nil {
-		log.Fatalf("Failed to create database %s: %v", dbName, err)
+func DisconnectMongo() {
+	if Cli != nil {
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		defer cancel()
+		Cli.Disconnect(ctx)
+		log.Println("Disconnected from MongoDB")
 	}
 }

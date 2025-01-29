@@ -1,6 +1,0 @@
-CREATE TABLE powerups (
-  id SERIAL PRIMARY KEY,
-  pname VARCHAR(255) NOT NULL,
-  duration SERIAL NOT NULL,
-  active BOOLEAN DEFAULT FALSE
-);
