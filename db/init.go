@@ -1,18 +1,20 @@
 package db
 
 import (
-	"database/sql"
+	"context"
 	"log"
 	"os"
-	"time"
+  "time"
 
-	_ "github.com/lib/pq"
-  gde "github.com/joho/godotenv"
+	gde "github.com/joho/godotenv"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-var DB *sql.DB
+var Cli *mongo.Client
+var Collection *mongo.Collection
 
-func init() {
+func Initdb() {
 
   log.Println("Loading .env files...")
   if err := gde.Load(".env"); err != nil {
@@ -20,39 +22,40 @@ func init() {
   }
 
   log.Println("Initializing database... ")
-  db, err := connectWithPq()
-  if err != nil {
-    log.Fatalf("Failed to connect to db: %v", err)
-  }
-  defer db.Close()
-  
-  log.Println("Successfully connected to the database")
+  connectToMongo()
+  log.Println("Successfully connected to MONGOB Atlas")
 
 }
 
-func connectWithPq() (*sql.DB, error) {
+func connectToMongo() {
   var connString string
-  if os.Getenv("ENV") == "development" {
-   connString = os.Getenv("LOCAL_DB_URL")
-  } else {
-    connString = os.Getenv("RENDER_DB_URL")
-  }
+  connString = os.Getenv("MONGODB_URL")
 
-  db, err := sql.Open("postgres", connString)
-  if err != nil {
-    return nil, err
-  }
+  // Connect to MongoDB
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	client, err := mongo.Connect(ctx, options.Client().ApplyURI(connString))
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer client.Disconnect(ctx)
 
-  // Configure connection pooling
-  db.SetMaxOpenConns(10)
-  db.SetMaxIdleConns(5)
-  db.SetConnMaxLifetime(time.Hour)
+	// Create databases by inserting data
+  createDatabase(client, "users")
+	createDatabase(client, "powerups")
+	createDatabase(client, "tasks")
 
-  // Test the connection
-  err = db.Ping()
-  if err != nil {
-    return nil, err
-  }
+  Cli = client
+}
 
-  return db, nil
+func createDatabase(client *mongo.Client, dbName string) {
+	// Access the database and a collection
+	db := client.Database(dbName)
+	Collection := db.Collection("dummy")
+
+	// Insert a document to persist the database
+	_, err := Collection.InsertOne(context.Background(), map[string]string{"name": "init"})
+	if err != nil {
+		log.Fatalf("Failed to create database %s: %v", dbName, err)
+	}
 }

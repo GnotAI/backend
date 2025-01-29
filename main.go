@@ -1,10 +1,11 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"os"
 
-	_ "project/backend/db"
+	"project/backend/db"
 	"project/backend/routes"
 
 	fiber "github.com/gofiber/fiber/v3"
@@ -13,6 +14,9 @@ import (
 func main() {
 
   log.Println("Starting fiber app...")
+
+  db.Initdb()
+
   app := fiber.New()
   PORT := os.Getenv("PORT")
 
@@ -21,6 +25,6 @@ func main() {
   routes.TaskRoutes(app)
   routes.PowerupRoutes(app)
   
-  log.Fatal(app.Listen(":"+PORT))
+  log.Fatal(app.Listen(fmt.Sprintf(":%s", PORT)))
 
 }
